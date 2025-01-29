@@ -1,56 +1,95 @@
 # Twitch-and-toot
 
-Twitch-and-toot is an open source project that allows you to post to Mastodon when a streamer is live on Twitch. It's now built on Python and can run on a RaspberryPi, Single Board Computer, Linux VPS, AWS Lambda, or a private server.
+A Python-based tool that posts to Mastodon, Twitter, and Bluesky when you go live on Twitch. Run it on any system - from a Raspberry Pi to AWS Lambda.
 
-## Requirements and Prerequisites
+## Features
 
-- Python 3 installed on the device that you plan to run the script on.
-- A Twitch API key (client ID and secret) which can be obtained from the Twitch Developer Dashboard.
-- A Mastodon API key (access token) which can be obtained from your Mastodon instance.
+- 🎮 Twitch stream detection
+- 🦣 Mastodon integration
+- 🐦 Optional Twitter support
+- 🦋 Optional Bluesky support
+- 🔄 Customizable check intervals
+- 📝 Configurable message templates
+- 🐳 Docker support
+
+## Requirements
+
+- Python 3.8+
+- Twitch Developer account
+- Mastodon account
+- (Optional) Twitter Developer account
+- (Optional) Bluesky account
 
 ## Installation
 
 1. Clone the Github repository to your device: `git clone https://github.com/ChiefGyk3D/twitch-and-toot.git`
 2. Install the required packages: `pip install -r requirements.txt`
-3. Create a `config.ini` file based on the `config_template.ini` file in the repository. Fill in the required information such as Twitch API key, Mastodon API key, and the channel name you want to track, messages, and any other changes needed.
-4. Run the script: `python twitch-and-toot.py`
+3. Set up configuration: rename .env.template to .env and edit it with your credentials
+4. Run the script: `python main.py`
 
 ## Configuration
 
-The config.ini file is used to store the required information such as the Twitch API key, Mastodon API key, and the channel name you want to track. You can also customize the messages that will be posted to Mastodon when the streamer is live and when the stream has ended. These messages are stored in separate text files and are referenced in the config.ini.
+configure your settings:
 
-Here's an example structure for the config.ini file:
+1. Rename `.env.template` to `.env`
+2. Edit `.env` with your credentials and settings
+3. Customize message templates in `messages.txt` and `end_messages.txt`
 
-```ini
-[Twitch]
-client_id = YOUR_TWITCH_CLIENT_ID
-client_secret = YOUR_TWITCH_CLIENT_SECRET
-user_login = YOUR_TWITCH_USERNAME
+The `.env` file supports these variables:
 
-[Mastodon]
-app_name = YOUR_APP_NAME
-api_base_url = YOUR_INSTANCE_URL
-client_id = YOUR_CLIENT_ID
-client_secret = YOUR_CLIENT_SECRET
-access_token = YOUR_ACCESS_TOKEN
-messages_file = MESSAGES_FILE_PATH
-end_messages_file = END_MESSAGES_FILE_PATH
-post_end_stream_message = BOOLEAN_VALUE
+```env
+TWITCH_CLIENT_ID=your_client_id
+TWITCH_CLIENT_SECRET=your_client_secret 
+TWITCH_USER_LOGIN=your_username
 
-[Secrets]
-secret_manager = YOUR_SECRET_MANAGER_TYPE 
-aws_twitch_secret_name = YOUR_TWITCH_SECRET_NAME_IN_AWS_SECRETS_MANAGER
-aws_mastodon_secret_name = YOUR_MASTODON_SECRET_NAME_IN_AWS_SECRETS_MANAGER
-vault_url = YOUR_VAULT_URL
-vault_token = YOUR_VAULT_TOKEN
-vault_twitch_secret_path = YOUR_TWITCH_SECRET_PATH_IN_VAULT
-vault_mastodon_secret_path = YOUR_MASTODON_SECRET_PATH_IN_VAULT
+MASTODON_CLIENT_ID=your_client_id
+MASTODON_CLIENT_SECRET=your_client_secret
+MASTODON_ACCESS_TOKEN=your_access_token
+MASTODON_API_BASE_URL=your_instance_url
 
-[Settings]
-post_interval = YOUR_PREFERRED_POST_INTERVAL_IN_HOURS
-check_interval = YOUR_PREFERRED_CHECK_INTERVAL_IN_MINUTES
+# Optional Twitter settings
+TWITTER_API_KEY=your_api_key
+TWITTER_API_SECRET=your_api_secret
+TWITTER_ACCESS_TOKEN=your_access_token
+TWITTER_ACCESS_SECRET=your_access_secret
+
+# Optional Bluesky settings 
+BLUESKY_USERNAME=your_username
+BLUESKY_PASSWORD=your_app_password
+
+# Optional AWS/Vault settings
+AWS_ACCESS_KEY_ID=your_aws_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret
+VAULT_TOKEN=your_vault_token
+
+# Intervals (in minutes)
+CHECK_INTERVAL=5
+POST_INTERVAL=60
 ```
-Please note, the config.ini should be modified to match your needs.
+
+## Message Templates
+
+Configure stream notifications in `messages.json`. The file supports multiple message templates for both stream start and end notifications:
+
+```json
+{
+  "messages": {
+    "live": [
+      "I'm now live on Twitch! Playing: {stream_title}. Watch here: https://twitch.tv/{twitch_user_login}",
+      "Join me on Twitch as I play {stream_title}! https://twitch.tv/{twitch_user_login}"
+    ],
+    "end": [
+      "Stream's over! Thanks everyone for joining. Follow me at https://twitch.tv/{twitch_user_login}",
+      "Just wrapped up my Twitch stream! Thanks for watching."
+    ]
+  }
+}
+```
+
+Available variables:
+- `{stream_title}`: Your stream title
+- `{twitch_user_login}`: Your Twitch username
+
 
 ## Twitter Integration
 
@@ -64,21 +103,32 @@ To use the Twitter feature, you would need:
 
     Twitter API keys (API key & secret, Access token & secret). You can obtain these from the Twitter Developer Dashboard.
 
-# Adding Twitter Integration
+  ## Platform Setup
 
-The process to add Twitter integration is similar to that of Mastodon. In the config.ini file, a new section needs to be added for Twitter configuration.
+  ### Twitch
+  1. Create a Twitch Developer account
+  2. Create a new application
+  3. Get Client ID and Client Secret
+  4. Add them to .env
 
-```ini
-[Twitter]
-api_key = YOUR_TWITTER_API_KEY
-api_key_secret = YOUR_TWITTER_API_KEY_SECRET
-access_token = YOUR_TWITTER_ACCESS_TOKEN
-access_token_secret = YOUR_TWITTER_ACCESS_TOKEN_SECRET
-```
+  ### Mastodon
+  1. Go to your instance's settings
+  2. Create new application
+  3. Get access token
+  4. Add credentials to .env
 
-Again, please be careful not to commit your config.ini with sensitive information to a public repository.
+  ### Twitter (Optional)
+  1. Create Twitter Developer account
+  2. Create new project and app
+  3. Generate keys and tokens
+  4. Set TWITTER_ENABLE_POSTING=true in .env
 
-Now, when you run python twitch-and-toot.py, it should post updates to both Mastodon and Twitter, if correctly configured.
+  ### Bluesky (Optional)
+  1. Create Bluesky account
+  2. Generate app password
+  3. Add credentials to .env
+  4. Set BLUESKY_ENABLE_POSTING=true
+
 ### Caution
 
 As stated before, placing secrets directly into the config.ini file is not a recommended practice for production environments. We are currently working on supporting secure storage and retrieval of Twitter API keys with AWS Secrets Manager and HashiCorp Vault. Please stay tuned for updates.
@@ -119,44 +169,22 @@ This will build and start the Docker container in one command.
 
 ## Docker Configuration
 
-Configuration in Docker is done using environment variables instead of a `config.ini` file. These can be passed into the Docker container using the `-e` option with `docker run`:
+Configuration in Docker is done using environment variables instead of a config.ini file. These can be passed into the Docker container using the `-e` option with `docker run`:
 
-`docker run -e TWITCH_CLIENT_ID=your_client_id -e TWITCH_CLIENT_SECRET=your_client_secret ... twitch-and-toot`
+`docker run -d --env-file .env twitch-and-toot`
 
-If you are using Docker Compose, you can put these variables into the `docker-compose.yml` file:
+For Docker Compose, Make sure your .env file is in the same directory as your docker-compose.yml file. The env_file directive will automatically load all environment variables from .env into the container.
 
-```yaml
-version: '3'
+You can then start the container with:
 
-services:
-  twitch-and-toot:
-    build: .
-    environment:
-      TWITCH_CLIENT_ID: your_client_id
-      TWITCH_CLIENT_SECRET: your_client_secret
-      TWITCH_USER_LOGIN: your_user_login
-      MASTODON_CLIENT_ID: your_client_id
-      MASTODON_CLIENT_SECRET: your_client_secret
-      MASTODON_ACCESS_TOKEN: your_access_token
-      MASTODON_API_BASE_URL: your_api_base_url
-      MESSAGES_FILE: messages.txt
-      END_MESSAGES_FILE: end_messages.txt
-      POST_END_STREAM_MESSAGE: 'True'
-      SECRET_MANAGER: your_secret_manager
-      AWS_TWITCH_SECRET_NAME: your_aws_twitch_secret_name
-      AWS_MASTODON_SECRET_NAME: your_aws_mastodon_secret_name
-      VAULT_URL: your_vault_url
-      VAULT_TOKEN: your_vault_token
-      VAULT_TWITCH_SECRET_PATH: your_vault_twitch_secret_path
-      VAULT_MASTODON_SECRET_PATH: your_vault_mastodon_secret_path
-      POST_INTERVAL_IN_HOURS: your_post_interval_in_hours
-      CHECK_INTERVAL_IN_MINUTES: your_check_interval_in_minutes
+```bash
+docker-compose up -d
 ```
-These environment variables correspond to the options in the config.ini file.
 
 Please note: If you are using a secrets manager with Docker, you will need to set up a network that allows the Docker container to access the secrets manager.
 
 Remember to replace the necessary values with your actual data.
+
 ## Future plans
 
 - Add support for more streaming platforms.
@@ -176,4 +204,5 @@ You can also tip the author with the following cryptocurrency addresses:
 
 - ChiefGyk3D is the author of Twitch-and-toot
 - [ChiefGyk3D's Mastodon Account](https://social.chiefgyk3d.com/@chiefgyk3d)
-- ChatGPT, an AI developed by OpenAI, helped build about 80% of the Python version of Twitch-and-toot.
+- Reviewed by Marc Gauthier [marcgauthier0.bsky.social]
+- ChatGPT, an AI developed by OpenAI, helped build and reorganize the project.

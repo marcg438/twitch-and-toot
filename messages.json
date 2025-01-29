@@ -1,0 +1,19 @@
+{
+    "messages": {
+      "live": [
+        "I'm now live on Twitch! Playing: {stream_title}. Watch here: https://twitch.tv/{twitch_user_login}",
+        "Join me on Twitch as I play {stream_title}! https://twitch.tv/{twitch_user_login}",
+        "I'm streaming {stream_title} on Twitch right now! Check it out: https://twitch.tv/{twitch_user_login}"
+      ],
+    "end": [
+      "Just wrapped up my Twitch stream! Thanks for watching. Follow at https://twitch.tv/{twitch_user_login}",
+      "Stream's over! Thanks everyone for joining. Follow me at https://twitch.tv/{twitch_user_login}",
+      "That's a wrap for today's stream! Catch the next one at https://twitch.tv/{twitch_user_login}",
+      "Just wrapped up my Twitch stream! Thanks to everyone who tuned in. Catch the next one here: https://twitch.tv/{twitch_user_login}",
+      "Thank you all for joining my live stream on Twitch! Follow me to be notified of the next one: https://twitch.tv/{twitch_user_login}",
+      "The stream has ended, but the fun isn't over! Follow my Twitch channel for more: https://twitch.tv/{twitch_user_login}",
+      "Another great stream on Twitch. Thanks for the support! Stay tuned for more here: https://twitch.tv/{twitch_user_login}",
+      "That's it for today's Twitch stream! See you in the next one. Follow me at https://twitch.tv/{twitch_user_login}"
+    ]
+  }
+}

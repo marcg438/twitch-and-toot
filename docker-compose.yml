@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  twitch-and-toot:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile
+    volumes:
+      - ./messages.json:/app/messages.json:ro
+      - ./.env:/app/.env:ro
+    env_file:
+      - .env
+    restart: unless-stopped
